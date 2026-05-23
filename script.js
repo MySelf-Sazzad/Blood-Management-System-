@@ -24,7 +24,7 @@ var bloodBanks = [];
 var emergencyCountdownInterval = null;
 
 // ========== Backend API Base URL ==========
-const API = '/api';
+const API = window.location.origin + '/api';
 
 // ========== Helper to map Backend data to Frontend format ==========
 function normalizeDonor(d) {
