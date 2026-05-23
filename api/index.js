@@ -246,7 +246,7 @@ app.get('/api/admin/users', async function(req, res) => {
     res.json({ success: true, users: users || [] });
 });
 
-app.get('/api/admin/stats', async function(req, res) => {
+app.get('/api/admin/stats', async function(req, res) {
     const { count: totalUsers } = await supabase.from('users').select('*', { count: 'exact', head: true });
     const { count: activeDonors } = await supabase.from('donors').select('*', { count: 'exact', head: true }).eq('is_active', true).eq('is_banned', false);
     const { count: pendingReports } = await supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending');
@@ -263,5 +263,7 @@ app.get('/api/admin/stats', async function(req, res) => {
     });
 });
 
-// Vercel Export
-module.exports = app;
+// Vercel Serverless Function Export
+module.exports = async (req, res) => {
+    await app(req, res);
+};
