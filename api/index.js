@@ -4,6 +4,7 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 app.use(cors());
 app.use(express.json());
+console.log('API file loaded successfully');
 
 // Supabase Connection
 const supabaseUrl = process.env.SUPABASE_URL || 'https://ixccxzgpfgvnquaexgal.supabase.co';
