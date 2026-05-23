@@ -1,10 +1,10 @@
 const express = require('express');
+const path = require('path'); // Railway এর জন্য path যোগ করা হয়েছে
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-console.log('API file loaded successfully');
 
 // Supabase Connection
 const supabaseUrl = process.env.SUPABASE_URL || 'https://ixccxzgpfgvnquaexgal.supabase.co';
@@ -33,10 +33,7 @@ app.post('/api/signup', async function(req, res) {
         }
 
         const { data: user, error } = await supabase.from('users').insert({ 
-            name: body.name, 
-            email: body.email, 
-            phone: body.phone, 
-            password: body.password 
+            name: body.name, email: body.email, phone: body.phone, password: body.password 
         }).select();
         
         if (error) {
@@ -67,7 +64,6 @@ app.post('/api/login', async function(req, res) {
         }
         res.json({ success: true, message: 'Login successful', user: users[0] });
     } catch (err) {
-        console.error('Login Crash:', err);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
@@ -75,10 +71,7 @@ app.post('/api/login', async function(req, res) {
 app.put('/api/profile', async function(req, res) {
     try {
         const { error } = await supabase.from('users').update({ 
-            name: req.body.name, 
-            email: req.body.email, 
-            phone: req.body.phone, 
-            address: req.body.address 
+            name: req.body.name, email: req.body.email, phone: req.body.phone, address: req.body.address 
         }).eq('id', req.body.id);
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
         res.json({ success: true, message: 'Profile updated successfully' });
@@ -118,26 +111,19 @@ app.post('/api/admin/login', async function(req, res) {
 app.post('/api/donors', async function(req, res) {
     try {
         var body = req.body;
-        
         const { data: user } = await supabase.from('users').select('email').eq('id', body.userId).single();
         if (user) {
             const { data: banned } = await supabase.from('banned_emails').select('*').eq('email', user.email);
             if (banned && banned.length > 0) return res.status(403).json({ success: false, message: 'This account has been permanently banned' });
         }
-
         const { data: existing } = await supabase.from('donors').select('*').eq('user_id', body.userId);
         if (existing && existing.length > 0) return res.status(400).json({ success: false, message: 'Already registered as a donor' });
 
         const { error } = await supabase.from('donors').insert({ 
-            user_id: body.userId, 
-            name: body.name, 
-            phone: body.phone, 
-            blood_group: body.bloodGroup, 
-            location: body.location, 
-            last_donation: body.lastDonation || null 
+            user_id: body.userId, name: body.name, phone: body.phone, blood_group: body.bloodGroup, 
+            location: body.location, last_donation: body.lastDonation || null 
         });
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
-        
         await supabase.from('users').update({ is_donor_registered: true }).eq('id', body.userId);
         res.json({ success: true, message: 'Donor registration successful' });
     } catch (err) {
@@ -147,12 +133,10 @@ app.post('/api/donors', async function(req, res) {
 
 app.get('/api/donors', async function(req, res) {
     try {
-        var blood = req.query.blood;
-        var location = req.query.location;
+        var blood = req.query.blood; var location = req.query.location;
         var query = supabase.from('donors').select('*').eq('is_active', true).eq('is_banned', false);
         if (blood) query = query.eq('blood_group', blood);
         if (location) query = query.ilike('location', `%${location}%`);
-        
         const { data: donors, error } = await query;
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
         res.json({ success: true, donors: donors || [] });
@@ -163,12 +147,10 @@ app.get('/api/donors', async function(req, res) {
 
 app.get('/api/donors/all', async function(req, res) {
     try {
-        var phone = req.query.phone;
-        var blood = req.query.blood;
+        var phone = req.query.phone; var blood = req.query.blood;
         var query = supabase.from('donors').select('*').order('id', { ascending: false });
         if (phone) query = query.ilike('phone', `%${phone}%`);
         if (blood) query = query.eq('blood_group', blood);
-        
         const { data: donors, error } = await query;
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
         res.json({ success: true, donors: donors || [] });
@@ -189,12 +171,9 @@ app.put('/api/donors/status', async function(req, res) {
 
 app.put('/api/donors/donated', async function(req, res) {
     try {
-        var cooldownDate = new Date();
-        cooldownDate.setDate(cooldownDate.getDate() + 90);
+        var cooldownDate = new Date(); cooldownDate.setDate(cooldownDate.getDate() + 90);
         const { error } = await supabase.from('donors').update({ 
-            is_active: false, 
-            cooldown_until: cooldownDate.toISOString(), 
-            last_donation: new Date().toISOString().split('T')[0] 
+            is_active: false, cooldown_until: cooldownDate.toISOString(), last_donation: new Date().toISOString().split('T')[0] 
         }).eq('user_id', req.body.userId);
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
         res.json({ success: true, message: '90-day cooldown started' });
@@ -282,14 +261,9 @@ app.get('/api/reports', async function(req, res) {
 app.post('/api/reports', async function(req, res) {
     try {
         const { error } = await supabase.from('reports').insert({ 
-            donor_id: req.body.donorId, 
-            donor_name: req.body.donorName, 
-            donor_blood_group: req.body.donorBloodGroup, 
-            donor_phone: req.body.donorPhone, 
-            donor_location: req.body.donorLocation, 
-            reported_by: req.body.reportedBy, 
-            reported_by_name: req.body.reportedByName, 
-            reason: req.body.reason 
+            donor_id: req.body.donorId, donor_name: req.body.donorName, donor_blood_group: req.body.donorBloodGroup, 
+            donor_phone: req.body.donorPhone, donor_location: req.body.donorLocation, reported_by: req.body.reportedBy, 
+            reported_by_name: req.body.reportedByName, reason: req.body.reason 
         });
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
         res.json({ success: true, message: 'Report submitted successfully' });
@@ -301,16 +275,13 @@ app.post('/api/reports', async function(req, res) {
 app.put('/api/reports/:id/ban', async function(req, res) {
     try {
         await supabase.from('reports').update({ status: 'banned' }).eq('id', req.params.id);
-        
         const { data: report } = await supabase.from('reports').select('*').eq('id', req.params.id).single();
         if (report && report.donor_id) {
             await supabase.from('donors').update({ is_active: false, is_banned: true }).eq('id', report.donor_id);
             const { data: donor } = await supabase.from('donors').select('user_id').eq('id', report.donor_id).single();
             if (donor) {
                 const { data: user } = await supabase.from('users').select('email').eq('id', donor.user_id).single();
-                if (user) {
-                    await supabase.from('banned_emails').upsert({ email: user.email }, { onConflict: 'email' });
-                }
+                if (user) await supabase.from('banned_emails').upsert({ email: user.email }, { onConflict: 'email' });
             }
         }
         res.json({ success: true, message: 'Report marked as banned' });
@@ -333,7 +304,6 @@ app.put('/api/reports/:id/dismiss', async function(req, res) {
 app.put('/api/donors/:id/ban', async function(req, res) {
     try {
         await supabase.from('donors').update({ is_active: false, is_banned: true }).eq('id', req.params.id);
-        
         const { data: donor } = await supabase.from('donors').select('user_id').eq('id', req.params.id).single();
         if (donor) {
             const { data: user } = await supabase.from('users').select('email').eq('id', donor.user_id).single();
@@ -349,13 +319,10 @@ app.delete('/api/donors/:id', async function(req, res) {
     try {
         const { data: donor } = await supabase.from('donors').select('user_id, name').eq('id', req.params.id).single();
         if (!donor) return res.status(404).json({ success: false, message: 'Donor not found' });
-
         await supabase.from('donors').delete().eq('id', req.params.id);
         await supabase.from('users').update({ is_donor_registered: false }).eq('id', donor.user_id);
-        
         const { data: user } = await supabase.from('users').select('email').eq('id', donor.user_id).single();
         if (user) await supabase.from('removed_donors').insert({ email: user.email, name: donor.name });
-        
         res.json({ success: true, message: 'Donor removed. Can re-register after 3 months.' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server error' });
@@ -379,21 +346,31 @@ app.get('/api/admin/stats', async function(req, res) {
         const { count: activeDonors } = await supabase.from('donors').select('*', { count: 'exact', head: true }).eq('is_active', true).eq('is_banned', false);
         const { count: pendingReports } = await supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending');
         const { count: bannedUsers } = await supabase.from('banned_emails').select('*', { count: 'exact', head: true });
-        
-        res.json({ 
-            success: true, 
-            stats: { 
-                totalUsers: totalUsers || 0, 
-                activeDonors: activeDonors || 0, 
-                pendingReports: pendingReports || 0, 
-                bannedUsers: bannedUsers || 0 
-            } 
-        });
+        res.json({ success: true, stats: { totalUsers: totalUsers || 0, activeDonors: activeDonors || 0, pendingReports: pendingReports || 0, bannedUsers: bannedUsers || 0 } });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
-// ========== VERCEL EXPORT (FIXED) ==========
-// ভার্সেলে সার্ভারলেস ফাংশন হিসেবে রান করার জন্য সঠিক মেথড
-module.exports = app;
+
+// ==========================================
+// RAILWAY এর জন্য স্পেশাল কোড (শুরু)
+// ==========================================
+
+// ফ্রন্টএন্ড ফাইলগুলো (HTML, CSS, JS) সার্ভ করার জন্য
+app.use(express.static(path.join(__dirname, '..')));
+
+// যেকোনো অন্য লিংকে গেলে index.html দেখাবে
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
+
+// রেলওয়েতে পোর্ট সেট করা
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+// ==========================================
+// RAILWAY এর জন্য স্পেশাল কোড (শেষ)
+// ==========================================
