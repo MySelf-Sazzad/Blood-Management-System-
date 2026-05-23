@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ami Donor - Save Lives, Become a Donor Today</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+ <div id="authSection" class="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-to-br from-red-50 to-white">
+  <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl space-y-8">
+        
+        <div class="text-center">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <div class="bg-red-200 p-2 rounded-full">
+                    <i data-lucide="heart" class="w-8 h-8 text-red-600"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-red-600" id="authTitle">Ami Donor</h2>
+            </div>
+           <p class="text-gray-500 text-sm">Save Lives, Become a Hero Today</p>
+        </div>
+        
+        <form id="loginForm" class="space-y-6">
+            <input type="text" id="loginIdentifier" required class="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Email or Phone Number">
+            <div class="password-wrapper">
+    <input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Password">
+    <span class="password-eye" onclick="togglePassword('loginPassword', this)">
+        <i data-lucide="eye" class="w-5 h-5"></i>
+    </span>
+</div>
+            <button type="submit" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700">Sign In</button>
+            <p class="text-center text-sm">Don't have an account? <a href="#" onclick="toggleAuthMode('signup')" class="text-red-600 font-bold">Sign up</a></p>
+        </form>
+
+        <form id="signupForm" class="space-y-4 hidden">
+            <input type="text" id="signupName" required class="w-full px-4 py-2 rounded-lg border border-gray-300" placeholder="Full Name">
+            <input type="email" id="signupEmail" required class="w-full px-4 py-2 rounded-lg border border-gray-300" placeholder="Email Address">
+            <input type="tel" id="signupPhone" required class="w-full px-4 py-2 rounded-lg border border-gray-300" placeholder="Phone Number">
+            <div class="password-wrapper">
+    <input type="password" id="signupPassword" required class="w-full px-4 py-2 rounded-lg border border-gray-300" placeholder="Password">
+    <span class="password-eye" onclick="togglePassword('signupPassword', this)">
+        <i data-lucide="eye" class="w-5 h-5"></i>
+    </span>
+</div>
+            <button type="submit" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700">Create Account</button>
+            <p class="text-center text-sm">Already have an account? <a href="#" onclick="toggleAuthMode('login')" class="text-red-600 font-bold">Log in</a></p>
+        </form>
+    </div>
+</div>
+
+<!-- Admin Login Section -->
+<div id="adminAuthSection" class="hidden min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-to-br from-gray-50 to-white">
+    <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl space-y-8">
+        <div class="text-center">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <div class="bg-gray-200 p-2 rounded-full">
+                    <i data-lucide="shield" class="w-8 h-8 text-gray-600"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-gray-600">Admin Panel</h2>
+            </div>
+           <p class="text-gray-500 text-sm">Authorized Access Only</p>
+        </div>
+        
+        <form id="adminLoginForm" class="space-y-6">
+            <input type="text" id="adminUsername" required class="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Admin Username">
+            <div class="password-wrapper">
+                <input type="password" id="adminPassword" required class="w-full px-4 py-3 rounded-lg border border-gray-300" placeholder="Admin Password">
+                <span class="password-eye" onclick="togglePassword('adminPassword', this)">
+                    <i data-lucide="eye" class="w-5 h-5"></i>
+                </span>
+            </div>
+            <button type="submit" class="w-full bg-gray-800 text-white font-bold py-3 rounded-lg hover:bg-black">Admin Login</button>
+            <p class="text-center text-sm"><a href="#" onclick="showUserLogin()" class="text-red-600 font-bold">Back to User Login</a></p>
+        </form>
+    </div>
+</div>
+
+<div id="mainApp" class="hidden"> 
+     <!-- Emergency Banner -->
+    <div id="emergencyBanner" class="bg-red-600 text-white px-4 py-2 text-center text-sm font-semibold flex items-center justify-center gap-2 sticky top-0 z-50">
+    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+    <span id="emergencyText">Emergency: Urgent need for O- blood at Dhaka City Hospital. Contact: +8801733278988</span>
+    <button onclick="closeEmergencyBanner()" class="ml-4 hover:bg-red-700 p-1 rounded">
+        <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+</div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-40" style="top: 40px;" id="mainNav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="showSection('home')">
+                    <div class="bg-red-600 p-2 rounded-full">
+                        <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-red-600">Ami Donor</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <button onclick="showSection('home')" class="nav-link text-gray-600 hover:text-red-600 font-medium transition">Home</button>
+                    <button onclick="showSection('find')" class="nav-link text-gray-600 hover:text-red-600 font-medium transition">Find Donor</button>
+                    <button onclick="showSection('register')" class="nav-link text-gray-600 hover:text-red-600 font-medium transition">Register</button>
+                    <button onclick="showSection('bloodbank')" class="nav-link text-gray-600 hover:text-red-600 font-medium transition">Blood Bank</button>
+                    <button onclick="showSection('dashboard')" class="nav-link text-gray-600 hover:text-red-600 font-medium transition">Dashboard</button>
+                    <button onclick="showSection('about')" class="nav-link text-gray-600 hover:text-red-600 font-medium transition">About</button>
+                    <button onclick="showSection('profile')" class="nav-link text-gray-600 hover:text-red-600 font-medium transition">My Profile</button>
+                    
+                 <!-- Notification Bell -->
+<div class="relative" id="notificationBellDesktop" onclick="toggleNotificationDropdown(event)">
+    <div class="relative p-2 rounded-full text-gray-600 hover:text-red-600 hover:bg-gray-100 transition-all cursor-pointer">
+        <i data-lucide="bell" class="w-6 h-6"></i>
+        <span id="notifBadgeDesktop" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full items-center justify-center font-bold animate-bounce pointer-events-none">0</span>
+    </div>
+    
+    <!-- Notification Dropdown -->
+    <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-96 max-h-[500px] overflow-y-auto bg-white rounded-xl shadow-2xl border border-gray-200 z-50">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                <i data-lucide="bell" class="w-5 h-5 text-red-600"></i>
+                Notifications
+            </h3>
+            <button onclick="event.stopPropagation(); markAllNotificationsRead()" class="text-sm text-red-600 hover:text-red-700 font-medium">
+                Mark all read
+            </button>
+        </div>
+        <div id="notificationListDesktop" class="divide-y divide-gray-100">
+            <div class="p-6 text-center text-gray-500">
+                <i data-lucide="bell-off" class="w-10 h-10 mx-auto mb-2 text-gray-300"></i>
+                <p class="text-sm">No notifications yet</p>
+            </div>
+        </div>
+    </div>
+</div>
+                    <button onclick="logout()" title="Logout" class="flex items-center justify-center gap-2 px-4 py-2 rounded-full border-2 border-gray-200 text-gray-600 hover:text-red-600 hover:border-red-600 transition-all duration-200 shadow-sm text-sm font-medium">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                     Logout
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-2">
+                   <!-- Notification Bell Mobile -->
+<div class="relative" id="notificationBellMobile" onclick="toggleNotificationDropdown(event)">
+    <div class="relative p-2 rounded-full text-gray-600 hover:text-red-600 hover:bg-gray-100 transition-all cursor-pointer">
+        <i data-lucide="bell" class="w-5 h-5"></i>
+        <span id="notifBadgeMobile" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full items-center justify-center font-bold animate-bounce pointer-events-none">0</span>
+    </div>
+    
+    <!-- Notification Dropdown Mobile -->
+    <div id="notificationDropdownMobile" class="hidden fixed top-16 right-4 left-4 w-auto max-h-[60vh] overflow-y-auto bg-white rounded-xl shadow-2xl border border-gray-200 z-50">
+        <div class="p-3 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">
+                <i data-lucide="bell" class="w-4 h-4 text-red-600"></i>
+                Notifications
+            </h3>
+            <button onclick="event.stopPropagation(); markAllNotificationsRead()" class="text-xs text-red-600 hover:text-red-700 font-medium">
+                Mark all read
+            </button>
+        </div>
+        <div id="notificationListMobile" class="divide-y divide-gray-100">
+            <div class="p-4 text-center text-gray-500">
+                <i data-lucide="bell-off" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+                <p class="text-xs">No notifications yet</p>
+            </div>
+        </div>
+    </div>
+</div>
+                    
+                   <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="p-2 rounded-md text-gray-600 hover:text-red-600 hover:bg-gray-100">
+                   <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <button onclick="showSection('home')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50">Home</button>
+                <button onclick="showSection('find')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50">Find Donor</button>
+                <button onclick="showSection('register')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50">Register</button>
+                <button onclick="showSection('bloodbank')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50">Blood Bank</button>
+                <button onclick="showSection('dashboard')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50">Dashboard</button>
+                <button onclick="showSection('profile')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50">My Profile</button>
+                <button onclick="showSection('about')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50">About</button>
+                <button onclick="logout()" class="flex items-center gap-3 w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        
+        <!-- Home Section -->
+        <section id="home" class="page-section">
+            <!-- Hero Section -->
+            <div class="relative bg-gradient-to-br from-red-50 to-white overflow-hidden">
+                <div class="absolute inset-0 opacity-10">
+                    <div class="absolute transform rotate-45 translate-x-1/2 translate-y-1/2">
+                        <i data-lucide="droplet" class="w-96 h-96 text-red-600"></i>
+                    </div>
+                </div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 relative z-10">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div class="space-y-8">
+                            <div class="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-semibold">
+                                <i data-lucide="activity" class="w-4 h-4"></i>
+                                <span>Over 2,000 Lives Saved</span>
+                            </div>
+                            
+                            <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                                Save Lives, <br>
+                                <span class="text-red-600">Become a Donor</span> Today
+                            </h1>
+                            
+                            <p class="text-lg text-gray-600 max-w-lg">
+                                Join our community of heroes. Your single donation can save up to three lives. Connect with recipients in your area instantly.
+                            </p>
+                            
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <span id="heroRegisterBtn">
+                                <button onclick="showSection('register')" class="bg-red-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-700 transform hover:-translate-y-1 transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                                    <i data-lucide="user-plus" class="w-5 h-5"></i>
+                                    Register as Donor
+                                </button>
+                                </span>
+                                <button onclick="openBloodRequestModal()" class="bg-white text-red-600 border-2 border-red-600 px-8 py-4 rounded-lg font-semibold hover:bg-red-50 transform hover:-translate-y-1 transition shadow-md flex items-center justify-center gap-2">
+                                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                                Request For Blood
+                                </button>
+                            </div>
+
+                <!-- Request For Blood Modal -->
+                            <div id="bloodRequestModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                            <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+                            <button onclick="closeBloodRequestModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                             </button>
+                           <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">Request For Blood</h3>
+                           <form id="bloodRequestForm" class="space-y-4">
+                        <input type="text" id="reqHospital" required class="w-full px-4 py-2 rounded-lg border" placeholder="Hospital Name">
+                        <input type="text" id="reqLocation" required class="w-full px-4 py-2 rounded-lg border" placeholder="Location">
+                        <select id="reqBlood" required class="w-full px-4 py-2 rounded-lg border bg-white">
+                <option value="">Select Blood Group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+            <input type="tel" id="reqPhone" required class="w-full px-4 py-2 rounded-lg border" placeholder="Contact Number">
+            <button type="submit" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg">Submit Request</button>
+        </form>
+    </div>
+</div>
+
+                            <!-- Quick Blood Group Selector -->
+                            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                                <p class="text-sm font-semibold text-gray-700 mb-4">Quick Search by Blood Group</p>
+                                <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                                    <button onclick="quickSearch('A+')" class="blood-quick-btn bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold py-2 rounded-lg transition border border-gray-200">A+</button>
+                                    <button onclick="quickSearch('A-')" class="blood-quick-btn bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold py-2 rounded-lg transition border border-gray-200">A-</button>
+                                    <button onclick="quickSearch('B+')" class="blood-quick-btn bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold py-2 rounded-lg transition border border-gray-200">B+</button>
+                                    <button onclick="quickSearch('B-')" class="blood-quick-btn bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold py-2 rounded-lg transition border border-gray-200">B-</button>
+                                    <button onclick="quickSearch('AB+')" class="blood-quick-btn bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold py-2 rounded-lg transition border border-gray-200">AB+</button>
+                                    <button onclick="quickSearch('AB-')" class="blood-quick-btn bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold py-2 rounded-lg transition border border-gray-200">AB-</button>
+                                    <button onclick="quickSearch('O+')" class="blood-quick-btn bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold py-2 rounded-lg transition border border-gray-200">O+</button>
+                                    <button onclick="quickSearch('O-')" class="blood-quick-btn bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold py-2 rounded-lg transition border border-gray-200">O-</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <img src="P2.png" alt="Blood Donation" class="rounded-2xl shadow-2xl w-full object-cover h-96">
+                            <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg max-w-xs">
+                                <div class="flex items-center gap-3">
+                                    <div class="relative flex h-3 w-3">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                    </div>
+                                    <div>
+                                             <p class="font-bold text-gray-900 leading-tight">Active Now</p>
+                                             <p id="heroActiveCount" class="text-sm text-green-600 font-semibold">Active Donors Right Now</p>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="bg-white py-12 border-y border-gray-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                        <div class="space-y-2">
+                            <p class="text-3xl font-bold text-red-600" id="statTotalDonors">0</p>
+                            <p class="text-gray-600 font-medium">Total Donors</p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-3xl font-bold text-red-600" id="statActiveDonors">0</p>
+                            <p class="text-gray-600 font-medium">Active Now</p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-3xl font-bold text-red-600">1,000+</p>
+                            <p class="text-gray-600 font-medium">Lives Saved</p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-3xl font-bold text-red-600">30+</p>
+                            <p class="text-gray-600 font-medium">Cities Covered</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Section -->
+        <section id="register" class="page-section hidden bg-gray-50 py-12">
+            <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-red-600 px-8 py-6">
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i data-lucide="user-plus" class="w-6 h-6"></i>
+                            Register as Donor
+                        </h2>
+                        <p class="text-red-100 mt-2">Join our life-saving community today</p>
+                    </div>
+                    
+                    <form id="donorForm" class="p-8 space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                            <input type="text" id="fullName" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition" placeholder="Your Name">
+                            <p id="nameError" class="text-red-500 text-sm mt-1 hidden">Please enter your full name</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                            <input type="tel" id="phoneNumber" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition" placeholder="+880xxxxxxxxxx">
+                            <p id="phoneError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid phone number</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Blood Group *</label>
+                            <select id="bloodGroup" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition bg-white">
+                                <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                            <p id="bloodError" class="text-red-500 text-sm mt-1 hidden">Please select your blood group</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Location (City/Area) *</label>
+                            <input type="text" id="location" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition" placeholder="Your City, Ex: Dhaka">
+                            <p id="locationError" class="text-red-500 text-sm mt-1 hidden">Please enter your location</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Donation Date</label>
+                            <input type="date" id="lastDonation" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition">
+                            <p class="text-gray-500 text-sm mt-1">Leave empty if never donated</p>
+                        </div>
+
+                        <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 rounded-lg hover:bg-red-700 transform hover:-translate-y-1 transition shadow-lg flex items-center justify-center gap-2">
+                            <i data-lucide="save" class="w-5 h-5"></i>
+                            Submit Registration
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Find Donor Section -->
+        <section id="find" class="page-section hidden bg-gray-50 py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Find Blood Donors</h2>
+                    <p class="text-gray-600">Search for available donors in your area</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 border border-gray-100">
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Blood Group</label>
+                            <select id="searchBloodGroup" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 outline-none bg-white">
+                                <option value="">All Blood Groups</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                            <input type="text" id="searchLocation" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 outline-none" placeholder="Enter city or area">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="searchDonors()" class="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition flex items-center justify-center gap-2">
+                                <i data-lucide="search" class="w-5 h-5"></i>
+                                Search Donors
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mb-6">
+                    <p class="text-gray-600">Showing <span id="resultCount" class="font-bold text-red-600">0</span> donors</p>
+                </div>
+
+                <div id="donorGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+
+                <div id="noResults" class="hidden text-center py-12">
+                    <div class="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="search-x" class="w-12 h-12 text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No donors found</h3>
+                    <p class="text-gray-600">Try adjusting your search criteria or register as a donor.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blood Bank Section -->
+        <section id="bloodbank" class="page-section hidden bg-gray-50 py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Blood Banks</h2>
+                    <p class="text-gray-600">Hospital blood banks in your area</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="bloodBankGrid">
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="page-section hidden bg-gray-50 py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Dashboard Overview</h2>
+                
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-blue-600">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Total Donors</p>
+                                <p class="text-3xl font-bold text-gray-900 mt-2" id="dashTotalDonors">0</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Active Donors</p>
+                                <p class="text-3xl font-bold text-gray-900 mt-2" id="dashActiveDonors">0</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-yellow-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Inactive (Recent)</p>
+                                <p class="text-3xl font-bold text-gray-900 mt-2" id="dashInactiveDonors">0</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <i data-lucide="clock" class="w-6 h-6 text-yellow-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-red-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Blood Groups</p>
+                                <p class="text-3xl font-bold text-gray-900 mt-2">8</p>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-full">
+                                <i data-lucide="droplet" class="w-6 h-6 text-red-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-red-600"></i>
+                            Recent Registrations
+                        </h3>
+                        <div id="recentRegistrations" class="space-y-4">
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <i data-lucide="alert-circle" class="text-red-600"></i>
+        Recent Emergency Requests
+    </h3>
+    <div id="recentRequestsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <p class="text-gray-500 text-sm italic">No active emergency requests.</p>
+    </div>
+</div>
+            
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="page-section hidden bg-white py-16">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-gray-900 mb-4">About Ami Donor</h2>
+                    <div class="w-20 h-1 bg-red-600 mx-auto rounded-full"></div>
+                </div>
+
+                <div class="space-y-12">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">The Problem</h3>
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Every day, thousands of people lose their lives due to blood shortages. In emergency situations, finding the right blood type quickly can be the difference between life and death. Traditional blood banks often face shortages during critical times.
+                            </p>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-center gap-2"><i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i> Shortage of rare blood types</li>
+                                <li class="flex items-center gap-2"><i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i> Delayed response in emergencies</li>
+                                <li class="flex items-center gap-2"><i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i> Lack of donor-recipient connection</li>
+                            </ul>
+                        </div>
+                        <div class="bg-red-50 p-8 rounded-2xl">
+                            <i data-lucide="heart-pulse" class="w-16 h-16 text-red-600 mb-4"></i>
+                            <h4 class="text-xl font-bold text-gray-900 mb-2">Did You Know?</h4>
+                            <p class="text-gray-600">One blood donation can save up to three lives, and someone needs blood every two seconds.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="order-2 md:order-1 bg-green-50 p-8 rounded-2xl">
+                            <i data-lucide="shield-check" class="w-16 h-16 text-green-600 mb-4"></i>
+                            <h4 class="text-xl font-bold text-gray-900 mb-2">Our Solution</h4>
+                            <p class="text-gray-600">Ami Donor bridges the gap between donors and recipients through real-time availability tracking and location-based matching.</p>
+                        </div>
+                        <div class="order-1 md:order-2">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">How We Help</h3>
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Ami Donor is a modern platform that connects voluntary blood donors with those in need. Our smart system tracks donation dates to ensure donor safety while maintaining an active database of available donors.
+                            </p>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i> Real-time donor availability</li>
+                                <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i> Location-based search</li>
+                                <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i> Smart eligibility tracking</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900 text-white rounded-2xl p-8 text-center">
+                        <h3 class="text-2xl font-bold mb-4">Join Our Mission</h3>
+                        <p class="text-gray-300 mb-6 max-w-2xl mx-auto">
+                            Whether you're a donor or seeking blood, Ami Donor is here to help. Together, we can ensure that no one suffers due to blood shortages.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <span id="aboutBecomeDonorBtn">
+                            <button onclick="showSection('register')" class="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition">Become a Donor</button>
+                            </span>
+                            <button onclick="showSection('find')" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition">Find Blood</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+           <!-- Profile -->
+ <section id="profile" class="page-section py-12 px-4 hidden">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Account Settings</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-1 space-y-4">
+                <div class="bg-white p-6 rounded-2xl shadow-sm text-center border border-gray-100">
+                    <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="user" class="w-12 h-12 text-red-600"></i>
+                    </div>
+                    <h3 id="displayProfileName" class="text-xl font-bold text-gray-900">User Name</h3>
+                    <p id="displayProfileEmail" class="text-gray-500 text-sm">user@example.com</p>
+                </div>
+
+                <div id="donorControls" class="p-4 bg-white rounded-lg shadow">
+                    <h3 class="text-lg font-semibold mb-3">Donor Status Management</h3>
+                    
+                    <div class="flex items-center justify-between mb-4">
+                        <span>Active Status:</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="statusToggle" onchange="handleStatusToggle()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <button id="donatedBtn" onclick="handleDonatedClick()" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition mt-4">
+                        Already Donated
+                    </button>
+                    
+                    <p id="cooldownMessage" class="text-sm text-red-500 mt-2 hidden">
+                        You are on a 90-day cooldown.
+                    </p>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-2 mb-6 text-gray-800">
+                        <i data-lucide="settings" class="w-5 h-5 text-red-600"></i>
+                        <h3 class="text-lg font-bold">General Information</h3>
+                    </div>
+                    <form id="profileForm" class="space-y-4">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <input type="text" id="profileName" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                <input type="email" id="profileEmail" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                                <input type="tel" id="profilePhone" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                <textarea id="profileAddress" rows="2" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none resize-none" placeholder="Your full address (House, Road, Area, City)"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-700 transition w-full md:w-auto">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-2 mb-6 text-gray-800">
+                        <i data-lucide="lock" class="w-5 h-5 text-red-600"></i>
+                        <h3 class="text-lg font-bold">Security (Change Password)</h3>
+                    </div>
+                    <form id="passwordForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                            <div class="password-wrapper">
+    <input type="password" id="currentPassword" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+    <span class="password-eye" onclick="togglePassword('currentPassword', this)">
+        <i data-lucide="eye" class="w-5 h-5"></i>
+    </span>
+</div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                                <div class="password-wrapper">
+    <input type="password" id="newPassword" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+    <span class="password-eye" onclick="togglePassword('newPassword', this)">
+        <i data-lucide="eye" class="w-5 h-5"></i>
+    </span>
+</div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                                <div class="password-wrapper">
+    <input type="password" id="confirmPassword" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+    <span class="password-eye" onclick="togglePassword('confirmPassword', this)">
+        <i data-lucide="eye" class="w-5 h-5"></i>
+    </span>
+</div>
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-gray-800 text-white px-6 py-2 rounded-lg font-medium hover:bg-black transition w-full md:w-auto">
+                            Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-red-600 p-2 rounded-full">
+                            <i data-lucide="heart" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">Ami Donor</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Connecting blood donors with recipients to save lives across communities.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><button onclick="showSection('home')" class="hover:text-white transition">Home</button></li>
+                        <li><button onclick="showSection('find')" class="hover:text-white transition">Find Donor</button></li>
+                        <li><button onclick="showSection('register')" class="hover:text-white transition">Register</button></li>
+                        <li><button onclick="showSection('bloodbank')" class="hover:text-white transition">Blood Bank</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i>16263 / 999</li>
+                        <li class="flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4"></i> help@amidonor.org</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Emergency</h4>
+                    <p class="text-red-400 font-bold text-lg">999</p>
+                    <p class="text-gray-400 text-sm mt-2">Available 24/7</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2024 Ami Donor. All rights reserved. Made with <i data-lucide="heart" class="w-4 h-4 inline text-red-600"></i> for humanity.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="phone" class="w-8 h-8 text-red-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Contact Donor</h3>
+                <p class="text-gray-600 text-sm mt-1" id="modalDonorName">Donor Name</p>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-500 mb-1">Phone Number</p>
+                    <p class="text-lg font-bold text-gray-900" id="modalDonorPhone">+1 555-0000</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-500 mb-1">Blood Group</p>
+                    <p class="text-lg font-bold text-red-600" id="modalDonorBlood">A+</p>
+                </div>
+                <button onclick="closeContactModal()" class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeReportModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="flag" class="w-8 h-8 text-yellow-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Report Donor</h3>
+                <p class="text-gray-600 text-sm mt-1" id="reportDonorName">Donor Name</p>
+            </div>
+            <form id="reportForm" class="space-y-4">
+                <input type="hidden" id="reportDonorId">
+                <textarea id="reportReason" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-500 outline-none" rows="4" placeholder="Reason for reporting..."></textarea>
+                <button type="submit" class="w-full bg-yellow-500 text-white font-bold py-3 rounded-lg hover:bg-yellow-600 transition">Submit Report</button>
+            </form>
+        </div>
+    </div>
+    </div>
+    
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden min-h-screen bg-gray-100">
+        <!-- Admin Navigation -->
+        <nav class="bg-gray-900 shadow-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-gray-700 p-2 rounded-full">
+                            <i data-lucide="shield" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-white">Admin Panel</span>
+                    </div>
+                    
+                    <div class="hidden md:flex items-center gap-4">
+                        <button onclick="showAdminSection('admindashboard')" class="admin-nav-link text-gray-300 hover:text-white font-medium transition">Dashboard</button>
+                        <button onclick="showAdminSection('adminreports')" class="admin-nav-link text-gray-300 hover:text-white font-medium transition">Reports</button>
+                        <button onclick="showAdminSection('admindonors')" class="admin-nav-link text-gray-300 hover:text-white font-medium transition">Donors</button>
+                        <button onclick="showAdminSection('adminbloodbanks')" class="admin-nav-link text-gray-300 hover:text-white font-medium transition">Blood Banks</button>
+                        <button onclick="adminLogout()" class="flex items-center gap-2 px-4 py-2 rounded-full border-2 border-gray-600 text-gray-300 hover:text-white hover:border-white transition text-sm font-medium">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Logout
+                        </button>
+                    </div>
+
+                    <!-- Admin Mobile Menu -->
+                    <div class="md:hidden flex items-center gap-2">
+                        <button onclick="toggleAdminMobileMenu()" class="p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Mobile Menu -->
+            <div id="adminMobileMenu" class="hidden md:hidden bg-gray-800 border-t">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <button onclick="showAdminSection('admindashboard')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Dashboard</button>
+                    <button onclick="showAdminSection('adminreports')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Reports</button>
+                    <button onclick="showAdminSection('admindonors')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Donors</button>
+                    <button onclick="showAdminSection('adminbloodbanks')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Blood Banks</button>
+                    <button onclick="adminLogout()" class="flex items-center gap-3 w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-gray-700">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Admin Dashboard Section -->
+            <section id="admindashboard" class="admin-section">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h2>
+                
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-blue-600">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Total Users</p>
+                                <p class="text-3xl font-bold text-gray-900 mt-2" id="adminTotalUsers">0</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Active Donors</p>
+                                <p class="text-3xl font-bold text-gray-900 mt-2" id="adminActiveDonors">0</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-yellow-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Pending Reports</p>
+                                <p class="text-3xl font-bold text-gray-900 mt-2" id="adminTotalReports">0</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <i data-lucide="flag" class="w-6 h-6 text-yellow-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-red-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Banned Users</p>
+                                <p class="text-3xl font-bold text-gray-900 mt-2" id="adminBannedUsers">0</p>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-full">
+                                <i data-lucide="ban" class="w-6 h-6 text-red-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-blue-600"></i>
+                        All Registered Users
+                    </h3>
+                    <div id="adminAllUsersList" class="space-y-4">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Reports Section -->
+            <section id="adminreports" class="admin-section hidden">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Reports Management</h2>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div id="adminReportsList" class="space-y-4">
+                        <p class="text-gray-500 text-sm italic">No reports yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Donors Section -->
+            <section id="admindonors" class="admin-section hidden">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">All Donors</h2>
+
+                <!-- Admin Donor Search -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 border border-gray-100">
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+                            <input type="text" id="adminDonorSearchPhone" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 outline-none" placeholder="Search by phone number">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Blood Group</label>
+                            <select id="adminDonorSearchBlood" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 outline-none bg-white">
+                                <option value="">All Blood Groups</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <button onclick="searchAdminDonors()" class="flex-1 bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition flex items-center justify-center gap-2">
+                                <i data-lucide="search" class="w-5 h-5"></i>
+                                Search
+                            </button>
+                            <button onclick="clearAdminDonorSearch()" class="px-4 py-3 rounded-lg border-2 border-gray-300 text-gray-600 hover:border-gray-500 hover:text-gray-900 transition font-medium">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div id="adminDonorsList" class="space-y-4">
+                        <p class="text-gray-500 text-sm italic">No donors yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Blood Banks Section -->
+            <section id="adminbloodbanks" class="admin-section hidden">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Manage Blood Banks</h2>
+                    <button onclick="openAddBloodBankModal()" class="bg-blue-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                        Add New Blood Bank
+                    </button>
+                </div>
+                
+                <div id="adminBloodBanksList" class="space-y-4">
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Blood Bank Modal -->
+    <div id="addBloodBankModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeAddBloodBankModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="building-2" class="w-8 h-8 text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Add New Blood Bank</h3>
+            </div>
+            <form id="addBloodBankForm" class="space-y-4">
+                <input type="text" id="newBankName" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Hospital / Blood Bank Name">
+                <input type="text" id="newBankAddress" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Address">
+                <input type="tel" id="newBankPhone" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Contact Number">
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Add Blood Bank</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ban Donor Confirmation Modal -->
+    <div id="banDonorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeBanDonorModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="ban" class="w-8 h-8 text-red-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Ban Donor</h3>
+                <p class="text-gray-600 text-sm mt-1" id="banDonorModalName">Donor Name</p>
+            </div>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <p class="text-sm text-yellow-800 font-medium flex items-center gap-2">
+                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                    Warning: This action is permanent and cannot be undone.
+                </p>
+            </div>
+            <form id="banDonorForm" class="space-y-4">
+                <input type="hidden" id="banDonorId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Banning *</label>
+                    <textarea id="banDonorReason" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 outline-none" rows="3" placeholder="Please provide a reason for banning this donor..."></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeBanDonorModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition">Cancel</button>
+                    <button type="submit" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition">Confirm Ban</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Remove Donor Confirmation Modal -->
+    <div id="removeDonorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeRemoveDonorModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="user-x" class="w-8 h-8 text-orange-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Remove Donor</h3>
+                <p class="text-gray-600 text-sm mt-1" id="removeDonorModalName">Donor Name</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <p class="text-sm text-blue-800 font-medium flex items-center gap-2">
+                    <i data-lucide="info" class="w-4 h-4"></i>
+                    The donor can re-register after 3 months.
+                </p>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">Are you sure you want to remove this donor from the system?</p>
+            <input type="hidden" id="removeDonorId">
+            <div class="flex gap-3">
+                <button onclick="closeRemoveDonorModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition">Cancel</button>
+                <button onclick="confirmRemoveDonor()" class="flex-1 bg-orange-500 text-white font-bold py-3 rounded-lg hover:bg-orange-600 transition">Confirm Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Blood Bank Confirmation Modal -->
+    <div id="removeBloodBankModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeRemoveBloodBankModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="building-2" class="w-8 h-8 text-red-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Remove Blood Bank</h3>
+                <p class="text-gray-600 text-sm mt-1" id="removeBloodBankModalName">Hospital Name</p>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">Are you sure you want to remove this hospital/blood bank from the system?</p>
+            <input type="hidden" id="removeBloodBankId">
+            <div class="flex gap-3">
+                <button onclick="closeRemoveBloodBankModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition">Cancel</button>
+                <button onclick="confirmRemoveBloodBank()" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition">Confirm Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Already Donated Confirmation Modal -->
+<div id="donatedConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+        <button onclick="closeDonatedConfirmModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <div class="text-center mb-6">
+            <div class="bg-yellow-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="alert-triangle" class="w-10 h-10 text-yellow-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900">Confirm Blood Donation</h3>
+            <p class="text-gray-600 text-sm mt-2" id="donatedModalUserName">Donor Name</p>
+        </div>
+        
+        <div class="bg-red-50 border-2 border-red-200 rounded-xl p-5 mb-6">
+            <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 mt-0.5">
+                    <i data-lucide="info" class="w-6 h-6 text-red-600"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-red-800 text-lg mb-2">⚠️ Important Warning</h4>
+                    <p class="text-red-700 text-sm leading-relaxed">
+                        By confirming, your donor profile will be <span class="font-bold">frozen for 90 days</span>. 
+                        During this cooldown period:
+                    </p>
+                    <ul class="text-red-700 text-sm mt-3 space-y-2">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                            <span>You will <span class="font-bold">NOT appear</span> in Find Donor search results</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                            <span>Your profile will show as <span class="font-bold">"Inactive"</span></span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                            <span>You <span class="font-bold">cannot receive</span> new blood requests</span>
+                        </li>
+                    </ul>
+                    <div class="mt-4 bg-white rounded-lg p-3 border border-red-100">
+                        <p class="text-gray-700 text-sm">
+                            <i data-lucide="clock" class="w-4 h-4 inline text-yellow-600"></i>
+                            Your profile will automatically reactivate after the cooldown period ends.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+            <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" id="donatedAgreeCheckbox" class="mt-1 w-5 h-5 text-red-600 rounded border-gray-300 focus:ring-red-500">
+                <span class="text-gray-700 text-sm">I understand that my profile will be frozen for 90 days and I confirm that I have donated blood.</span>
+            </label>
+        </div>
+
+        <div class="flex gap-3">
+            <button type="button" onclick="closeDonatedConfirmModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition flex items-center justify-center gap-2">
+                <i data-lucide="x" class="w-4 h-4"></i>
+                Cancel
+            </button>
+            <button type="button" id="confirmDonatedBtn" onclick="confirmDonatedAction()" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" disabled>
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                Confirm Donation
+            </button>
+        </div>
+    </div>
+</div>
+
+    <script src="script.js"></script>
+</body>
+</html>

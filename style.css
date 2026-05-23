@@ -1,0 +1,476 @@
+/* Custom Styles for Ami Donor */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #dc2626;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b91c1c;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse-slow {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+}
+
+#emergencyBanner {
+    animation: pulse-slow 2s infinite;
+}
+
+.blood-quick-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.blood-quick-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.blood-quick-btn:active {
+    transform: translateY(0);
+}
+
+.donor-card {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.donor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #fecaca;
+}
+
+.status-badge {
+    position: relative;
+    overflow: hidden;
+}
+
+.status-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+}
+
+.status-badge:hover::before {
+    left: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.nav-link.active {
+    color: #dc2626;
+    position: relative;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #dc2626;
+    border-radius: 2px;
+}
+
+#mobileMenu {
+    transition: all 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+}
+
+#mobileMenu.hidden {
+    max-height: 0;
+}
+
+#mobileMenu:not(.hidden) {
+    max-height: 400px;
+}
+
+#adminMobileMenu {
+    transition: all 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+}
+
+#adminMobileMenu.hidden {
+    max-height: 0;
+}
+
+#adminMobileMenu:not(.hidden) {
+    max-height: 400px;
+}
+
+#contactModal {
+    transition: opacity 0.3s ease;
+}
+
+#contactModal > div {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#reportModal {
+    transition: opacity 0.3s ease;
+}
+
+#reportModal > div {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#addBloodBankModal {
+    transition: opacity 0.3s ease;
+}
+
+#addBloodBankModal > div {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#banDonorModal {
+    transition: opacity 0.3s ease;
+}
+
+#banDonorModal > div {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#removeDonorModal {
+    transition: opacity 0.3s ease;
+}
+
+#removeDonorModal > div {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#removeBloodBankModal {
+    transition: opacity 0.3s ease;
+}
+
+#removeBloodBankModal > div {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.stat-number {
+    transition: all 0.5s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media (max-width: 768px) {
+    #mainNav {
+        top: 0 !important;
+    }
+    
+    .blood-quick-btn {
+        font-size: 0.875rem;
+        padding: 0.5rem;
+    }
+}
+
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #dc2626;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    border-left: 4px solid #dc2626;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.notification-toast {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    z-index: 200;
+    transform: translateX(120%);
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border-left: 4px solid #dc2626;
+    max-width: 350px;
+}
+
+.notification-toast.show {
+    transform: translateX(0);
+}
+
+#notificationDropdown {
+    animation: slideDown 0.3s ease-out;
+}
+
+#notificationDropdownMobile {
+    animation: slideDown 0.3s ease-out;
+}
+
+#notifBadgeDesktop,
+#notifBadgeMobile {
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.medical-bg {
+    background-image: radial-gradient(#dc2626 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.05;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #d1d5db;
+    border-radius: 24px;
+    transition: 0.3s;
+}
+
+.toggle-slider:before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #16a34a;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.toggle-switch input:disabled + .toggle-slider {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.password-wrapper {
+    position: relative;
+}
+.password-wrapper input {
+    padding-right: 44px !important;
+}
+.password-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #9ca3af;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+}
+.password-eye:hover {
+    color: #dc2626;
+}
+
+#notificationListDesktop > div:hover,
+#notificationListMobile > div:hover {
+    background-color: #fef2f2 !important;
+}
+
+#notificationDropdown::-webkit-scrollbar,
+#notificationDropdownMobile::-webkit-scrollbar {
+    width: 6px;
+}
+
+#notificationDropdown::-webkit-scrollbar-track,
+#notificationDropdownMobile::-webkit-scrollbar-track {
+    background: #f9fafb;
+}
+
+#notificationDropdown::-webkit-scrollbar-thumb,
+#notificationDropdownMobile::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 3px;
+}
+
+#notificationDropdown::-webkit-scrollbar-thumb:hover,
+#notificationDropdownMobile::-webkit-scrollbar-thumb:hover {
+    background: #d1d5db;
+}
+
+.countdown-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 1px solid #fdba74;
+    color: #c2410c;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    animation: countdownPulse 2s ease-in-out infinite;
+}
+
+@keyframes countdownPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Already Donated Modal Checkbox */
+#donatedAgreeCheckbox:checked {
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+
+#donatedAgreeCheckbox {
+    accent-color: #dc2626;
+}
