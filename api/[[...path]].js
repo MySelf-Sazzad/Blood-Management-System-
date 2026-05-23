@@ -6,8 +6,8 @@ app.use(cors());
 app.use(express.json());
 
 // Supabase Connection
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseUrl = 'https://ixccxzgpfgvnquaexgal.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2N4emdwZmd2bnF1YWV4Z2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Nzk5ODEsImV4cCI6MjA5NTA1NTk4MX0.mGZeVyzg4ASngzbhL7pMj7xPRvceDR9xR4AAlbw57XU';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ========== AUTH ==========
@@ -27,7 +27,7 @@ app.post('/api/signup', async function(req, res) {
     }
 
     // Check existing
-    const { data: existing } = await supabase.from('users').select('*').or(`email.eq.${body.email},phone.eq.${body.phone}`);
+    const { data: existing } = await supabase.from('users').select('*').or('email.eq.' + body.email + ',phone.eq.' + body.phone);
     if (existing && existing.length > 0) {
         return res.status(400).json({ success: false, message: 'Email or phone already exists' });
     }
@@ -45,7 +45,7 @@ app.post('/api/login', async function(req, res) {
         return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
-    const { data: users, error } = await supabase.from('users').select('*').or(`email.eq.${body.identifier},phone.eq.${body.identifier}`).eq('password', body.password);
+    const { data: users, error } = await supabase.from('users').select('*').or('email.eq.' + body.identifier + ',phone.eq.' + body.identifier).eq('password', body.password);
     if (error || !users || users.length === 0) {
         return res.status(401).json({ success: false, message: 'Invalid email/phone or password' });
     }
