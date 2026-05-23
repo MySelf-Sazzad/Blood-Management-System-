@@ -6,8 +6,8 @@ app.use(cors());
 app.use(express.json());
 
 // Supabase Connection
-const supabaseUrl = 'https://ixccxzgpfgvnquaexgal.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2N4emdwZmd2bnF1YWV4Z2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Nzk5ODEsImV4cCI6MjA5NTA1NTk4MX0.mGZeVyzg4ASngzbhL7pMj7xPRvceDR9xR4AAlbw57XU';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://ixccxzgpfgvnquaexgal.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2N4emdwZmd2bnF1YWV4Z2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Nzk5ODEsImV4cCI6MjA5NTA1NTk4MX0.mGZeVyzg4ASngzbhL7pMj7xPRvceDR9xR4AAlbw57XU';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ========== AUTH ==========
