@@ -6,12 +6,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Supabase Connection
 const supabaseUrl = process.env.SUPABASE_URL || 'https://ixccxzgpfgvnquaexgal.supabase.co';
 const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2N4emdwZmd2bnF1YWV4Z2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Nzk5ODEsImV4cCI6MjA5NTA1NTk4MX0.mGZeVyzg4ASngzbhL7pMj7xPRvceDR9xR4AAlbw57XU';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// ========== AUTH ==========
 app.post('/signup', async function(req, res) {
     try {
         var body = req.body;
@@ -83,7 +81,6 @@ app.put('/password', async function(req, res) {
     }
 });
 
-// ========== ADMIN LOGIN ==========
 app.post('/admin/login', async function(req, res) {
     try {
         var body = req.body;
@@ -97,7 +94,6 @@ app.post('/admin/login', async function(req, res) {
     }
 });
 
-// ========== DONORS ==========
 app.post('/donors', async function(req, res) {
     try {
         var body = req.body;
@@ -122,7 +118,8 @@ app.post('/donors', async function(req, res) {
 
 app.get('/donors', async function(req, res) {
     try {
-        var blood = req.query.blood; var location = req.query.location;
+        var blood = req.query.blood;
+        var location = req.query.location;
         var query = supabase.from('donors').select('*').eq('is_active', true).eq('is_banned', false);
         if (blood) query = query.eq('blood_group', blood);
         if (location) query = query.ilike('location', '%' + location + '%');
@@ -136,7 +133,8 @@ app.get('/donors', async function(req, res) {
 
 app.get('/donors/all', async function(req, res) {
     try {
-        var phone = req.query.phone; var blood = req.query.blood;
+        var phone = req.query.phone;
+        var blood = req.query.blood;
         var query = supabase.from('donors').select('*').order('id', { ascending: false });
         if (phone) query = query.ilike('phone', '%' + phone + '%');
         if (blood) query = query.eq('blood_group', blood);
@@ -160,7 +158,8 @@ app.put('/donors/status', async function(req, res) {
 
 app.put('/donors/donated', async function(req, res) {
     try {
-        var cooldownDate = new Date(); cooldownDate.setDate(cooldownDate.getDate() + 90);
+        var cooldownDate = new Date();
+        cooldownDate.setDate(cooldownDate.getDate() + 90);
         const { error } = await supabase.from('donors').update({ 
             is_active: false, cooldown_until: cooldownDate.toISOString(), last_donation: new Date().toISOString().split('T')[0] 
         }).eq('user_id', req.body.userId);
@@ -171,7 +170,6 @@ app.put('/donors/donated', async function(req, res) {
     }
 });
 
-// ========== BLOOD BANKS ==========
 app.get('/blood-banks', async function(req, res) {
     try {
         const { data: bloodBanks, error } = await supabase.from('blood_banks').select('*');
@@ -213,7 +211,6 @@ app.delete('/blood-banks/:id', async function(req, res) {
     }
 });
 
-// ========== EMERGENCY REQUESTS ==========
 app.get('/emergency-requests', async function(req, res) {
     try {
         var twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -236,7 +233,6 @@ app.post('/emergency-requests', async function(req, res) {
     }
 });
 
-// ========== REPORTS ==========
 app.get('/reports', async function(req, res) {
     try {
         const { data: reports, error } = await supabase.from('reports').select('*').order('created_at', { ascending: false });
@@ -289,7 +285,6 @@ app.put('/reports/:id/dismiss', async function(req, res) {
     }
 });
 
-// ========== ADMIN DONOR ACTIONS ==========
 app.put('/donors/:id/ban', async function(req, res) {
     try {
         await supabase.from('donors').update({ is_active: false, is_banned: true }).eq('id', req.params.id);
@@ -318,7 +313,6 @@ app.delete('/donors/:id', async function(req, res) {
     }
 });
 
-// ========== ADMIN DASHBOARD ==========
 app.get('/admin/users', async function(req, res) {
     try {
         const { data: users, error } = await supabase.from('users').select('id, name, email, phone, is_donor_registered, created_at').order('id', { ascending: false });
@@ -341,5 +335,4 @@ app.get('/admin/stats', async function(req, res) {
     }
 });
 
-// ভার্সেলের জন্য - এই লাইনটি সবচেয়ে শেষে
 module.exports = app;
