@@ -34,7 +34,10 @@ app.post('/api/signup', async function(req, res) {
 
     // Insert
     const { data: user, error } = await supabase.from('users').insert({ name: body.name, email: body.email, phone: body.phone, password: body.password }).select();
-    if (error) return res.status(500).json({ success: false, message: 'Server error' });
+    if (error) {
+    console.error('Supabase Insert Error:', error);
+    return res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+}
     
     res.json({ success: true, message: 'Account created successfully', user: user[0] });
 });
