@@ -39,7 +39,7 @@ function normalizeDonor(d) {
         registrationDate: d.registration_date,
         isActive: d.is_active === true || d.is_active === 1,
         cooldownUntil: d.cooldown_until,
-        isBanned: d.is_banned === true || d.isBanned === 1,
+        isBanned: d.is_banned === true || d.is_banned === 1,
     };
 }
 
