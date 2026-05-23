@@ -266,7 +266,13 @@ app.get('/api/admin/stats', async function(req, res) {
     });
 });
 
-// Vercel Serverless Function Export
-module.exports = async (req, res) => {
-    await app(req, res);
+// ========== ERROR HANDLING ==========
+app.use(function(err, req, res, next) {
+    console.error('Server Crash:', err);
+    res.status(500).json({ success: false, message: 'Server error: ' + err.message });
+});
+
+// ========== VERCEL EXPORT ==========
+module.exports = function(req, res) {
+    app(req, res);
 };
