@@ -624,7 +624,10 @@ async function confirmRemoveDonor() {
         if(donorObj) {
             var removedList = getRemovedDonors(); removedList.push({ email: donorObj.userId, name: donorObj.name, removedAt: new Date().toISOString() }); saveRemovedDonors(removedList); }
         closeRemoveDonorModal(); loadData(); searchAdminDonors(); showToast('Donor removed. They can re-register after 3 months.', 'success');
-    } catch(e) { showToast('Error removing donor', 'error'); }
+    } catch(err) { 
+    console.error('Signup Error Details:', err);
+    showToast('Error: ' + (err.message || 'Check console'), 'error'); 
+}
 }
 
 // ========== Admin Blood Banks Management ==========
@@ -699,7 +702,10 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         var res = await fetch(API + '/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ identifier, password }) });
         var data = await res.json();
         if (data.success) { localStorage.setItem('currentUser', JSON.stringify(data.user)); this.reset(); checkAuth(); showToast('Logged in successfully'); } else { showToast(data.message, 'error'); }
-    } catch(err) { showToast('Error logging in.', 'error'); }
+    } catch(err) { 
+    console.error('Login Error Details:', err);
+    showToast('Error: ' + (err.message || 'Check console'), 'error'); 
+}
 });
 
 function logout() { localStorage.removeItem('currentUser'); checkAuth(); }
