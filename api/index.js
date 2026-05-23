@@ -394,7 +394,6 @@ app.get('/api/admin/stats', async function(req, res) {
     }
 });
 
-// ========== VERCEL EXPORT ==========
-module.exports = function(req, res) {
-    app(req, res);
-};
+// ========== VERCEL EXPORT (FIXED) ==========
+// ভার্সেলে সার্ভারলেস ফাংশন হিসেবে রান করার জন্য সঠিক মেথড
+module.exports = app;
