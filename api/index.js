@@ -1,5 +1,6 @@
 const express = require('express');
-const path = require('path'); // Railway এর জন্য path যোগ করা হয়েছে
+const cors = require('cors');
+const path = require('path'); // Railway এর জন্য path যোগ করা হয়েছে
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
