@@ -1,4 +1,3 @@
-// api/index.js
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
@@ -16,39 +15,29 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 app.post('/signup', async function(req, res) {
     try {
         var body = req.body;
-        console.log('Signup request received:', body);
-        
         if (!body.name || !body.email || !body.phone || !body.password) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
         }
         if (body.password.length < 6) {
             return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
         }
-
         const { data: banned } = await supabase.from('banned_emails').select('*').eq('email', body.email);
         if (banned && banned.length > 0) {
             return res.status(403).json({ success: false, message: 'This email has been permanently banned' });
         }
-
         const { data: existing } = await supabase.from('users').select('*').or('email.eq.' + body.email + ',phone.eq.' + body.phone);
         if (existing && existing.length > 0) {
             return res.status(400).json({ success: false, message: 'Email or phone already exists' });
         }
-
         const { data: user, error } = await supabase.from('users').insert({ 
             name: body.name, email: body.email, phone: body.phone, password: body.password 
         }).select();
-        
         if (error) {
-            console.error('Insert Error:', error);
             return res.status(500).json({ success: false, message: 'Database error: ' + error.message });
         }
-        
-        console.log('User created successfully:', user);
         res.json({ success: true, message: 'Account created successfully', user: user[0] });
     } catch (err) {
-        console.error('Signup Crash:', err);
-        res.status(500).json({ success: false, message: 'Server error: ' + err.message });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
@@ -58,11 +47,9 @@ app.post('/login', async function(req, res) {
         if (!body.identifier || !body.password) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
         }
-
         const { data: users, error } = await supabase.from('users').select('*')
             .or('email.eq.' + body.identifier + ',phone.eq.' + body.identifier)
             .eq('password', body.password);
-            
         if (error || !users || users.length === 0) {
             return res.status(401).json({ success: false, message: 'Invalid email/phone or password' });
         }
@@ -88,7 +75,6 @@ app.put('/password', async function(req, res) {
     try {
         const { data: users } = await supabase.from('users').select('*').eq('id', req.body.id).eq('password', req.body.currentPassword);
         if (!users || users.length === 0) return res.status(401).json({ success: false, message: 'Current password is incorrect' });
-        
         const { error } = await supabase.from('users').update({ password: req.body.newPassword }).eq('id', req.body.id);
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
         res.json({ success: true, message: 'Password changed successfully' });
@@ -122,7 +108,6 @@ app.post('/donors', async function(req, res) {
         }
         const { data: existing } = await supabase.from('donors').select('*').eq('user_id', body.userId);
         if (existing && existing.length > 0) return res.status(400).json({ success: false, message: 'Already registered as a donor' });
-
         const { error } = await supabase.from('donors').insert({ 
             user_id: body.userId, name: body.name, phone: body.phone, blood_group: body.bloodGroup, 
             location: body.location, last_donation: body.lastDonation || null 
@@ -140,7 +125,7 @@ app.get('/donors', async function(req, res) {
         var blood = req.query.blood; var location = req.query.location;
         var query = supabase.from('donors').select('*').eq('is_active', true).eq('is_banned', false);
         if (blood) query = query.eq('blood_group', blood);
-        if (location) query = query.ilike('location', `%${location}%`);
+        if (location) query = query.ilike('location', '%' + location + '%');
         const { data: donors, error } = await query;
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
         res.json({ success: true, donors: donors || [] });
@@ -153,7 +138,7 @@ app.get('/donors/all', async function(req, res) {
     try {
         var phone = req.query.phone; var blood = req.query.blood;
         var query = supabase.from('donors').select('*').order('id', { ascending: false });
-        if (phone) query = query.ilike('phone', `%${phone}%`);
+        if (phone) query = query.ilike('phone', '%' + phone + '%');
         if (blood) query = query.eq('blood_group', blood);
         const { data: donors, error } = await query;
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
@@ -327,7 +312,7 @@ app.delete('/donors/:id', async function(req, res) {
         await supabase.from('users').update({ is_donor_registered: false }).eq('id', donor.user_id);
         const { data: user } = await supabase.from('users').select('email').eq('id', donor.user_id).single();
         if (user) await supabase.from('removed_donors').insert({ email: user.email, name: donor.name });
-        res.json({ success: true, message: 'Donor removed. Can re-register after 3 months.' });
+        res.json({ success: true, message: 'Donor removed.' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -356,5 +341,5 @@ app.get('/admin/stats', async function(req, res) {
     }
 });
 
-// ভার্সেলের জন্য module.exports
+// ভার্সেলের জন্য - এই লাইনটি সবচেয়ে শেষে
 module.exports = app;
