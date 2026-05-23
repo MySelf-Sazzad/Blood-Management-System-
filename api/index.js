@@ -1,6 +1,6 @@
+// api/index.js
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // Railway এর জন্য path যোগ করা হয়েছে
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
@@ -13,9 +13,11 @@ const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ========== AUTH ==========
-app.post('/api/signup', async function(req, res) {
+app.post('/signup', async function(req, res) {
     try {
         var body = req.body;
+        console.log('Signup request received:', body);
+        
         if (!body.name || !body.email || !body.phone || !body.password) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
         }
@@ -42,14 +44,15 @@ app.post('/api/signup', async function(req, res) {
             return res.status(500).json({ success: false, message: 'Database error: ' + error.message });
         }
         
+        console.log('User created successfully:', user);
         res.json({ success: true, message: 'Account created successfully', user: user[0] });
     } catch (err) {
         console.error('Signup Crash:', err);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: 'Server error: ' + err.message });
     }
 });
 
-app.post('/api/login', async function(req, res) {
+app.post('/login', async function(req, res) {
     try {
         var body = req.body;
         if (!body.identifier || !body.password) {
@@ -69,7 +72,7 @@ app.post('/api/login', async function(req, res) {
     }
 });
 
-app.put('/api/profile', async function(req, res) {
+app.put('/profile', async function(req, res) {
     try {
         const { error } = await supabase.from('users').update({ 
             name: req.body.name, email: req.body.email, phone: req.body.phone, address: req.body.address 
@@ -81,7 +84,7 @@ app.put('/api/profile', async function(req, res) {
     }
 });
 
-app.put('/api/password', async function(req, res) {
+app.put('/password', async function(req, res) {
     try {
         const { data: users } = await supabase.from('users').select('*').eq('id', req.body.id).eq('password', req.body.currentPassword);
         if (!users || users.length === 0) return res.status(401).json({ success: false, message: 'Current password is incorrect' });
@@ -95,7 +98,7 @@ app.put('/api/password', async function(req, res) {
 });
 
 // ========== ADMIN LOGIN ==========
-app.post('/api/admin/login', async function(req, res) {
+app.post('/admin/login', async function(req, res) {
     try {
         var body = req.body;
         const { data: admins, error } = await supabase.from('admins').select('*').eq('username', body.username).eq('password', body.password);
@@ -109,7 +112,7 @@ app.post('/api/admin/login', async function(req, res) {
 });
 
 // ========== DONORS ==========
-app.post('/api/donors', async function(req, res) {
+app.post('/donors', async function(req, res) {
     try {
         var body = req.body;
         const { data: user } = await supabase.from('users').select('email').eq('id', body.userId).single();
@@ -132,7 +135,7 @@ app.post('/api/donors', async function(req, res) {
     }
 });
 
-app.get('/api/donors', async function(req, res) {
+app.get('/donors', async function(req, res) {
     try {
         var blood = req.query.blood; var location = req.query.location;
         var query = supabase.from('donors').select('*').eq('is_active', true).eq('is_banned', false);
@@ -146,7 +149,7 @@ app.get('/api/donors', async function(req, res) {
     }
 });
 
-app.get('/api/donors/all', async function(req, res) {
+app.get('/donors/all', async function(req, res) {
     try {
         var phone = req.query.phone; var blood = req.query.blood;
         var query = supabase.from('donors').select('*').order('id', { ascending: false });
@@ -160,7 +163,7 @@ app.get('/api/donors/all', async function(req, res) {
     }
 });
 
-app.put('/api/donors/status', async function(req, res) {
+app.put('/donors/status', async function(req, res) {
     try {
         const { error } = await supabase.from('donors').update({ is_active: req.body.isActive }).eq('user_id', req.body.userId);
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
@@ -170,7 +173,7 @@ app.put('/api/donors/status', async function(req, res) {
     }
 });
 
-app.put('/api/donors/donated', async function(req, res) {
+app.put('/donors/donated', async function(req, res) {
     try {
         var cooldownDate = new Date(); cooldownDate.setDate(cooldownDate.getDate() + 90);
         const { error } = await supabase.from('donors').update({ 
@@ -184,7 +187,7 @@ app.put('/api/donors/donated', async function(req, res) {
 });
 
 // ========== BLOOD BANKS ==========
-app.get('/api/blood-banks', async function(req, res) {
+app.get('/blood-banks', async function(req, res) {
     try {
         const { data: bloodBanks, error } = await supabase.from('blood_banks').select('*');
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
@@ -194,7 +197,7 @@ app.get('/api/blood-banks', async function(req, res) {
     }
 });
 
-app.post('/api/blood-banks', async function(req, res) {
+app.post('/blood-banks', async function(req, res) {
     try {
         var id = 'bb' + Date.now();
         const { error } = await supabase.from('blood_banks').insert({ id: id, name: req.body.name, address: req.body.address, phone: req.body.phone });
@@ -205,7 +208,7 @@ app.post('/api/blood-banks', async function(req, res) {
     }
 });
 
-app.put('/api/blood-banks/:id', async function(req, res) {
+app.put('/blood-banks/:id', async function(req, res) {
     try {
         const { error } = await supabase.from('blood_banks').update({ name: req.body.name, address: req.body.address, phone: req.body.phone }).eq('id', req.params.id);
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
@@ -215,7 +218,7 @@ app.put('/api/blood-banks/:id', async function(req, res) {
     }
 });
 
-app.delete('/api/blood-banks/:id', async function(req, res) {
+app.delete('/blood-banks/:id', async function(req, res) {
     try {
         const { error } = await supabase.from('blood_banks').delete().eq('id', req.params.id);
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
@@ -226,7 +229,7 @@ app.delete('/api/blood-banks/:id', async function(req, res) {
 });
 
 // ========== EMERGENCY REQUESTS ==========
-app.get('/api/emergency-requests', async function(req, res) {
+app.get('/emergency-requests', async function(req, res) {
     try {
         var twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
         const { data: requests, error } = await supabase.from('emergency_requests').select('*').gte('created_at', twentyFourHoursAgo).order('created_at', { ascending: false });
@@ -237,7 +240,7 @@ app.get('/api/emergency-requests', async function(req, res) {
     }
 });
 
-app.post('/api/emergency-requests', async function(req, res) {
+app.post('/emergency-requests', async function(req, res) {
     try {
         var id = 'req_' + Date.now();
         const { error } = await supabase.from('emergency_requests').insert({ id: id, hospital: req.body.hospital, location: req.body.location, blood: req.body.blood, phone: req.body.phone });
@@ -249,7 +252,7 @@ app.post('/api/emergency-requests', async function(req, res) {
 });
 
 // ========== REPORTS ==========
-app.get('/api/reports', async function(req, res) {
+app.get('/reports', async function(req, res) {
     try {
         const { data: reports, error } = await supabase.from('reports').select('*').order('created_at', { ascending: false });
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
@@ -259,7 +262,7 @@ app.get('/api/reports', async function(req, res) {
     }
 });
 
-app.post('/api/reports', async function(req, res) {
+app.post('/reports', async function(req, res) {
     try {
         const { error } = await supabase.from('reports').insert({ 
             donor_id: req.body.donorId, donor_name: req.body.donorName, donor_blood_group: req.body.donorBloodGroup, 
@@ -273,7 +276,7 @@ app.post('/api/reports', async function(req, res) {
     }
 });
 
-app.put('/api/reports/:id/ban', async function(req, res) {
+app.put('/reports/:id/ban', async function(req, res) {
     try {
         await supabase.from('reports').update({ status: 'banned' }).eq('id', req.params.id);
         const { data: report } = await supabase.from('reports').select('*').eq('id', req.params.id).single();
@@ -291,7 +294,7 @@ app.put('/api/reports/:id/ban', async function(req, res) {
     }
 });
 
-app.put('/api/reports/:id/dismiss', async function(req, res) {
+app.put('/reports/:id/dismiss', async function(req, res) {
     try {
         const { error } = await supabase.from('reports').update({ status: 'dismissed' }).eq('id', req.params.id);
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
@@ -302,7 +305,7 @@ app.put('/api/reports/:id/dismiss', async function(req, res) {
 });
 
 // ========== ADMIN DONOR ACTIONS ==========
-app.put('/api/donors/:id/ban', async function(req, res) {
+app.put('/donors/:id/ban', async function(req, res) {
     try {
         await supabase.from('donors').update({ is_active: false, is_banned: true }).eq('id', req.params.id);
         const { data: donor } = await supabase.from('donors').select('user_id').eq('id', req.params.id).single();
@@ -316,7 +319,7 @@ app.put('/api/donors/:id/ban', async function(req, res) {
     }
 });
 
-app.delete('/api/donors/:id', async function(req, res) {
+app.delete('/donors/:id', async function(req, res) {
     try {
         const { data: donor } = await supabase.from('donors').select('user_id, name').eq('id', req.params.id).single();
         if (!donor) return res.status(404).json({ success: false, message: 'Donor not found' });
@@ -331,7 +334,7 @@ app.delete('/api/donors/:id', async function(req, res) {
 });
 
 // ========== ADMIN DASHBOARD ==========
-app.get('/api/admin/users', async function(req, res) {
+app.get('/admin/users', async function(req, res) {
     try {
         const { data: users, error } = await supabase.from('users').select('id, name, email, phone, is_donor_registered, created_at').order('id', { ascending: false });
         if (error) return res.status(500).json({ success: false, message: 'Server error' });
@@ -341,7 +344,7 @@ app.get('/api/admin/users', async function(req, res) {
     }
 });
 
-app.get('/api/admin/stats', async function(req, res) {
+app.get('/admin/stats', async function(req, res) {
     try {
         const { count: totalUsers } = await supabase.from('users').select('*', { count: 'exact', head: true });
         const { count: activeDonors } = await supabase.from('donors').select('*', { count: 'exact', head: true }).eq('is_active', true).eq('is_banned', false);
@@ -353,25 +356,5 @@ app.get('/api/admin/stats', async function(req, res) {
     }
 });
 
-
-// ==========================================
-// RAILWAY এর জন্য স্পেশাল কোড (শুরু)
-// ==========================================
-
-// ফ্রন্টএন্ড ফাইলগুলো (HTML, CSS, JS) সার্ভ করার জন্য
-app.use(express.static(path.join(__dirname, '..')));
-
-// যেকোনো অন্য লিংকে গেলে index.html দেখাবে
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'index.html'));
-});
-
-// রেলওয়েতে পোর্ট সেট করা
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
-// ==========================================
-// RAILWAY এর জন্য স্পেশাল কোড (শেষ)
-// ==========================================
+// ভার্সেলের জন্য module.exports
+module.exports = app;
