@@ -12,6 +12,18 @@
       "dest": "/api/index.js"
     },
     {
+      "src": "/style.css",
+      "dest": "/style.css"
+    },
+    {
+      "src": "/script.js",
+      "dest": "/script.js"
+    },
+    {
+      "src": "/P2.png",
+      "dest": "/P2.png"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
