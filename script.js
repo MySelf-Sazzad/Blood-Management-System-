@@ -7,6 +7,7 @@ var displayedDonors = [];
 var currentFilter = 'all';
 var emergencyAlerts = [];
 var notifications = [];
+var _isSearching = false;
 
 var defaultBloodBanks = [
     { id: 'bb1', name: 'Dhaka City Hospital Blood Bank', address: 'Dhaka, Bangladesh', phone: '+8801733278988' },
@@ -264,8 +265,10 @@ document.getElementById('donorForm').addEventListener('submit', async function(e
     } catch (err) { showToast('Error connecting to server.', 'error'); }
 });
 
-// ========== Search Donors (FIXED) ==========
+// ========== Search Donors ==========
 async function searchDonors() {
+    if (_isSearching) return;
+    _isSearching = true;
     var bloodFilter = document.getElementById('searchBloodGroup').value;
     var locationFilter = document.getElementById('searchLocation').value.toLowerCase();
 
@@ -293,6 +296,7 @@ async function searchDonors() {
         });
         displayDonors(filtered);
     }
+    _isSearching = false;
 }
 function filterByStatus(status) { currentFilter = status; searchDonors(); }
 function quickSearch(bloodGroup) { document.getElementById('searchBloodGroup').value = bloodGroup; showSection('find'); }
@@ -306,9 +310,15 @@ function displayDonors(donorsToShow) {
     countSpan.textContent = donorsToShow.length;
     if (donorsToShow.length === 0) { grid.innerHTML = ''; noResults.classList.remove('hidden'); return; }
     noResults.classList.add('hidden');
+    grid.style.opacity = '0';
     grid.innerHTML = donorsToShow.map(function(donor) {
-        return '<div class="donor-card bg-white rounded-xl shadow-md p-6 border border-gray-100 animate-fade-in"><div class="flex justify-between items-start mb-4"><div class="flex items-center gap-3"><div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center"><span class="text-red-600 font-bold text-lg">' + donor.bloodGroup + '</span></div><div><h3 class="font-bold text-gray-900">' + donor.name + '</h3><p class="text-sm text-gray-500 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i>' + donor.location + '</p></div></div><div class="text-right flex flex-col items-end gap-1"><span class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">&#9679; Available</span><button onclick="openReportModal(' + donor.id + ')" class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition">&#9888; Report</button></div></div><button onclick="openContactModal(' + donor.id + ')" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition flex items-center justify-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i>Contact Donor</button></div>';
-    }).join(''); lucide.createIcons();
+        return '<div class="donor-card bg-white rounded-xl shadow-md p-6 border border-gray-100"><div class="flex justify-between items-start mb-4"><div class="flex items-center gap-3"><div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center"><span class="text-red-600 font-bold text-lg">' + donor.bloodGroup + '</span></div><div><h3 class="font-bold text-gray-900">' + donor.name + '</h3><p class="text-sm text-gray-500 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i>' + donor.location + '</p></div></div><div class="text-right flex flex-col items-end gap-1"><span class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">&#9679; Available</span><button onclick="openReportModal(' + donor.id + ')" class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition">&#9888; Report</button></div></div><button onclick="openContactModal(' + donor.id + ')" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition flex items-center justify-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i>Contact Donor</button></div>';
+    }).join('');
+    lucide.createIcons();
+    requestAnimationFrame(function() {
+        grid.style.transition = 'opacity 0.3s ease';
+        grid.style.opacity = '1';
+    });
 }
 
 // ========== Contact Modal ==========
@@ -625,7 +635,7 @@ async function confirmRemoveDonor() {
             var removedList = getRemovedDonors(); removedList.push({ email: donorObj.userId, name: donorObj.name, removedAt: new Date().toISOString() }); saveRemovedDonors(removedList); }
         closeRemoveDonorModal(); loadData(); searchAdminDonors(); showToast('Donor removed. They can re-register after 3 months.', 'success');
     } catch(err) { 
-    console.error('Signup Error Details:', err);
+    console.error('Remove Donor Error:', err);
     showToast('Error: ' + (err.message || 'Check console'), 'error'); 
 }
 }
@@ -747,7 +757,7 @@ async function handleStatusToggle() {
     var donor = donors.find(function(d) { return d.userId === currentUser.id; }); if (!donor) { showToast('Please register as a donor first.', 'error'); toggle.checked = false; return; } if (donor.cooldownUntil && new Date(donor.cooldownUntil) > new Date()) { showToast('Cannot activate during 90-day cooldown.', 'error'); toggle.checked = false; return; } try { await fetch(API + '/donors/status', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: currentUser.id, isActive: toggle.checked }) }); donor.isActive = toggle.checked; showToast(toggle.checked ? 'You are now visible in Find Donor.' : 'You are now hidden from Find Donor.', toggle.checked ? 'success' : 'info'); } catch(e) { showToast('Error updating status.', 'error'); }
 }
 
-// ========== Already Donated Modal Functions (FIXED) ==========
+// ========== Already Donated Modal Functions ==========
 function handleDonatedClick() {
     var currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) return;
@@ -763,7 +773,6 @@ function handleDonatedClick() {
         return;
     }
 
-    // Show the confirmation modal instead of confirm()
     document.getElementById('donatedModalUserName').textContent = donor.name + ' (' + donor.bloodGroup + ')';
     document.getElementById('donatedAgreeCheckbox').checked = false;
     updateDonatedConfirmButton();
@@ -775,12 +784,10 @@ function closeDonatedConfirmModal() {
     document.getElementById('donatedConfirmModal').classList.add('hidden');
 }
 
-// Close modal when clicking outside
 document.getElementById('donatedConfirmModal').addEventListener('click', function(e) {
     if (e.target === this) closeDonatedConfirmModal();
 });
 
-// Enable/disable confirm button based on checkbox
 document.getElementById('donatedAgreeCheckbox').addEventListener('change', function() {
     updateDonatedConfirmButton();
 });
@@ -818,7 +825,6 @@ async function confirmDonatedAction() {
 
         var data = await res.json();
         if (data.success) {
-            // Update local donor data
             var donor = donors.find(function(d) { return d.userId === currentUser.id; });
             if (donor) {
                 var cooldownDate = new Date();
