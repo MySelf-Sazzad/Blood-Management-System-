@@ -307,15 +307,8 @@ function displayDonors(donorsToShow) {
     if (donorsToShow.length === 0) { grid.innerHTML = ''; noResults.classList.remove('hidden'); return; }
     noResults.classList.add('hidden');
     grid.innerHTML = donorsToShow.map(function(donor) {
-        return '<div class="donor-card bg-white rounded-xl shadow-md p-6 border border-gray-100"><div class="flex justify-between items-start mb-4"><div class="flex items-center gap-3"><div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center"><span class="text-red-600 font-bold text-lg">' + donor.bloodGroup + '</span></div><div><h3 class="font-bold text-gray-900">' + donor.name + '</h3><p class="text-sm text-gray-500 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i>' + donor.location + '</p></div></div><div class="text-right flex flex-col items-end gap-1"><span class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">&#9679; Available</span><button onclick="openReportModal(' + donor.id + ')" class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition">&#9888; Report</button></div></div><button onclick="openContactModal(' + donor.id + ')" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition flex items-center justify-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i>Contact Donor</button></div>';
-    }).join('');
-    lucide.createIcons();
-    setTimeout(function() {
-        grid.querySelectorAll('.donor-card').forEach(function(card, i) {
-            card.style.opacity = '0';
-            card.style.animation = 'fadeIn 0.5s ease-out ' + (i * 0.08) + 's forwards';
-        });
-    }, 20);
+        return '<div class="donor-card bg-white rounded-xl shadow-md p-6 border border-gray-100 animate-fade-in"><div class="flex justify-between items-start mb-4"><div class="flex items-center gap-3"><div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center"><span class="text-red-600 font-bold text-lg">' + donor.bloodGroup + '</span></div><div><h3 class="font-bold text-gray-900">' + donor.name + '</h3><p class="text-sm text-gray-500 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i>' + donor.location + '</p></div></div><div class="text-right flex flex-col items-end gap-1"><span class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">&#9679; Available</span><button onclick="openReportModal(' + donor.id + ')" class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition">&#9888; Report</button></div></div><button onclick="openContactModal(' + donor.id + ')" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition flex items-center justify-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i>Contact Donor</button></div>';
+    }).join(''); lucide.createIcons();
 }
 
 // ========== Contact Modal ==========
